@@ -1,0 +1,108 @@
+# grafos_1
+
+﻿Trabalho de Implementação 1
+
+CI1065 - Algoritmos e Teoria dos Grafos
+Para a representação de grafos na entrada e saída ao longo da disciplina vamos utilizar a linguagem de descrição de grafos dot que é implementada pelo pacote de software GraphViz. Para uma amostra da linguagem dot veja esta galeria de grafos. A biblioteca cgraph implementa (entre outras coisas) uma estrutura de dados para a manipulação de grafos e um interpretador ("parser") da linguagem dot. O pacote GraphViz é distribuido livremente para diversas plataformas. Em particular, nas distribuições de GNU/Linux baseadas na distribuição Debian, basta instalar o pacote
+libgraphviz-dev.  Recomenda-se também instalar os pacotes graphviz (utilitários, especialmente para desenhar grafos) e graphviz-doc (documentação adicional). Estes pacotes estão instalados nos servidores da rede do Departamento de Informática.
+
+O objetivo deste trabalho é desenvolver uma biblioteca básica para análise de grafos. Para auxiliar a execução do trabalho, é fornecido o arquivo trabalho-1.tar.gz cujo conteúdo, uma vez expandido, é o seguinte.
+
+
+
+trabalho-1/grafo.h:
+	a especificação do que deve ser implementado
+
+trabalho-1/grafo.c:
+	um "esqueleto" da implementação do
+especificado em grafo.h
+
+trabalho-1/teste.c:
+	um pequeno programa de teste.
+
+trabalho-1/makefile:
+	um Makefile que compila grafo.c e teste.c com as opções de compilação que serão usadas na correção
+
+
+
+
+Entrega
+O trabalho deve ser entregue sob a forma de um arquivo de nome
+fulano-sicrano.tar.gz, sendo que fulano e sicrano devem
+ser substituídos pelos login name dos autores.
+O arquivo fulano-sicrano.tar.gz, uma  vez expandido, deve criar
+(somente) os seguintes arquivos.
+
+
+
+
+fulano-sicrano/readme.txt:
+ arquivo  que   deve  ser   usado  para
+comunicar tudo que seja relevante para
+a correção do trabalho.
+
+fulano-sicrano/grafo.c:
+ a   implementação   do  especificado   em
+trabalho-1/grafo.h.
+
+
+
+O arquivo fulano-sicrano.tar.gz deve ser entregue como anexo de
+mensagem enviada para m.v.g.dasilva@gmail.com (turma BCC1) ou
+renato.carmo.rc@gmail.com (turmas BCC2 e IBM-2).  O "Subject:"
+desta mensagem deve ser "Entrega do trabalho 1".
+O prazo para a entrega é  31/7/2022, às 23h59min.
+
+
+Perguntas Frequentes
+
+O trabalho pode ser feito em grupo?
+O trabalho pode ser feito em duplas ou individualmente.
+No caso de trabalhos individuais o nome do arquivo a ser entregue
+deve ser fulano.tar.gz, sendo que fulano deve ser
+substituido pelo login name do autor.
+
+Se eu fizer este trabalho em dupla/individualmente terei que fazer os
+próximos da mesma forma?
+Não. A cada trabalho você poderá escolher fazer individualmente ou
+em dupla com outro aluno.
+
+O arquivo  grafo.c pode conter  outras funções/variáveis/tipos
+além daqueles presentes em  grafo.h ?
+Pode (e, para boa organização do código, deve).  Como usual, a
+especificação do trabalho descreve somente a interface a ser
+implementada. A maneira de implementar é livre.
+
+O que será levado em conta na correção?
+Na correção serão levados em conta (entre outros) os seguintes elementos.
+
+Conformidade com a especificação.
+Correção da implementação.
+Eficiência da implementação.
+Organização e clareza  do código (nomes de  funções e variáveis,
+comentários etc).
+
+
+Por que a especificação de entrega é importante?
+Porque o trabalho entregue será  pré-processado por um programa que
+depende de a especificação de entrega ser corretamente observada.
+
+O que acontece se a  especificação de entrega não for corretamente
+observada?
+Seu trabalho só será corrigido quando houver tempo de fazer
+manualmente o pré-processamento. Por isso, haverá um severo
+desconto na sua nota, proporcional ao trabalho de pré-processamento
+que tenha que ser feito manualmente.
+
+Descobri um  erro depois que  entreguei o trabalho.  Posso entregar
+uma versão corrigida?
+Você  pode entregar  o  trabalho mais  de uma  vez.   A última  versão
+entregue dentro do prazo é a que será corrigida.
+
+Meu trabalho tem um bug. O que vai acontecer com minha nota?
+Haverá algum desconto, dependendo da  gravidade do bug.  O desconto
+será  menor  se  o  bug for  relatado  no  arquivo  readme.txt,
+indicando que você estava ciente do problema quando entregou.
+
+Tenho outra pergunta/dúvida a respeito do trabalho.
+Envie mensagem para a lista da disciplina.
