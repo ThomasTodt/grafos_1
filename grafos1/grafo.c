@@ -9,12 +9,13 @@ grafo le_grafo(void)
 //------------------------------------------------------------------------------
 void destroi_grafo(grafo g) 
 {
-  return agclose(g);
+  //return agclose(g);
 }
 //------------------------------------------------------------------------------
 grafo escreve_grafo(grafo g) 
 {
-  return agwrite(g, stdout);
+  agwrite(g, stdout);
+  return g;
 }
 
 // -----------------------------------------------------------------------------
@@ -84,14 +85,26 @@ int grau_minimo(grafo g)
 }
 
 // -----------------------------------------------------------------------------
-int grau_medio(grafo g) {
-  
-  return 0;
+int grau_medio(grafo g)
+{
+  vertice atual = agfstnode(g);
+  int total = 0;
+
+  vertice ultimo = aglstnode(g);
+
+  while (atual != ultimo)
+  {
+    total += grau(atual, g);
+    atual = agnxtnode(g, atual);
+  }
+
+  // Meio estranho retornar int, faria mais sentido retornar um float.
+  return total / n_vertices(g);
 }
 
 // -----------------------------------------------------------------------------
-int regular(grafo g) {
-  
+int regular(grafo g)
+{
   return 0;
 }
 
