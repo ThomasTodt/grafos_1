@@ -1,4 +1,5 @@
 #include "grafo.h"
+#include <graphviz/cgraph.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,6 +12,10 @@ typedef struct {
   Agrec_t header;
   int criada;
 } info_aresta;
+
+static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices); // funcao que auxilia a funcao "conexo"
+static int backtrack_bipartido(grafo g, vertice v, int cor_atual);
+static void multiplica_matriz_adjacencia(int **A, int **B, int **C, int tamanho);
 
 //------------------------------------------------------------------------------
 grafo le_grafo(void) 
@@ -46,8 +51,7 @@ int n_arestas(grafo g)
 // -----------------------------------------------------------------------------
 int grau(vertice v, grafo g) 
 {
-  // return agdegree(g, v, 0, 0);
-  return agcountuniqedges(g, v, 0, 0); // considera loop como uma aresta apenas
+  return agcountuniqedges(g, v, TRUE, TRUE);
 }
 
 // -----------------------------------------------------------------------------
@@ -139,23 +143,23 @@ int completo(grafo g) {
 }
 
 // -----------------------------------------------------------------------------
-int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // funcao que auxilia a funcao "conexo"
+static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // funcao que auxilia a funcao "conexo"
 {
   if (contador_vertices == 0)
     return 1;
 
   info_vertice *info;
-  info = aggetrec(atual, "info_vertice", TRUE);
+  info = (info_vertice*) aggetrec(atual, "info_vertice", TRUE);
 
   if (info->contado == 0) // contabiliza o vertice
   {
     info->contado = 1;
-    *contador_vertices--;
+    (*contador_vertices)--;
 
 
     for (vertice v = agnxtnode(g, atual); v; v = agnxtnode(g,v))
     {
-      if ( agedge(g, atual, v, NULL, 0) );
+      if ( agedge(g, atual, v, NULL, 0) )
       {
         if ( backtrack_conexo(g, v, contador_vertices) == 1 )
           return 1;
@@ -215,7 +219,7 @@ int bipartido(grafo g) {
 
   for (vertice v = agfstnode(g); v; v = agnxtnode(g,v))
   {
-    info = aggetrec(v, "info_vertice", TRUE);
+    info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
     info->contado = -1;
   }
 
@@ -230,7 +234,7 @@ int bipartido(grafo g) {
 }
 
 // -----------------------------------------------------------------------------
-void multiplica_matriz_adjacencia(int **A, int **B, int **C, int tamanho)
+static void multiplica_matriz_adjacencia(int **A, int **B, int **C, int tamanho)
 {
   for (int i=0; i < tamanho; i++)
   {
@@ -250,13 +254,13 @@ int n_triangulos(grafo g)
 
   int tamanho = n_vertices(g);
 
-  mat2 = malloc (tamanho * sizeof (int*)) ;
+  mat2 = (int **) malloc ((unsigned long) tamanho * sizeof (int*)) ;
   for (int i=0; i < tamanho; i++)
-    mat2[i] = malloc (tamanho * sizeof (int)) ;
+    mat2[i] = (int *) malloc ((unsigned long) tamanho * sizeof (int)) ;
 
-  mat3 = malloc (tamanho * sizeof (int*)) ;
+  mat3 = (int **) malloc ((unsigned long) tamanho * sizeof (int*)) ;
   for (int i=0; i < tamanho; i++)
-    mat3[i] = malloc (tamanho * sizeof (int)) ;
+    mat3[i] = (int *) malloc ((unsigned long) tamanho * sizeof (int)) ;
 
 
   multiplica_matriz_adjacencia(mat, mat, mat2, tamanho);
@@ -293,10 +297,10 @@ int **matriz_adjacencia(grafo g)
 
   int **mat;
 
-  mat = malloc (num_vertices * sizeof (int*)) ;
+  mat = malloc ((unsigned long) num_vertices * sizeof (int*)) ;
 
   for (i=0; i < num_vertices; i++)
-    mat[i] = malloc (num_vertices * sizeof (int)) ;
+    mat[i] = malloc ((unsigned long) num_vertices * sizeof (int)) ;
   
   i=0;
   j=0;
@@ -308,17 +312,14 @@ int **matriz_adjacencia(grafo g)
 
       if(e != NULL){
         mat[i][j]=1;
-        printf("1");
       }
       else{
         mat[i][j]=0;
-        printf("0");
       }
         
       j++;
     }
 
-    printf("\n");
     i++;
   }
   
@@ -328,48 +329,23 @@ int **matriz_adjacencia(grafo g)
 // -----------------------------------------------------------------------------
 grafo complemento(grafo g)
 {
-  info_aresta *info;
+  grafo h = agopen("complemento", g->desc, NULL);
 
-  grafo h = agread( agwrite(g, stdin), stdin );
-
-  // inicializa arestas (records)
-  for (vertice v = agfstnode(h); v; v = agnxtnode(h,v))
-  {
-    for (Agedge_t *a = agfstedge(h, v); a; a = agnxtedge(h, a, v)) // inicializa mais de uma vez a mesma aresta?
-    {
-      info = agbindrec(v, "info_aresta", sizeof(info_aresta), TRUE);
-      info->criada = 0 ;
-    }
+  // criando o mesmo numero de nodos no novo grafo
+  for (vertice v = agfstnode(g); v; v = agnxtnode(g, v)) {
+    agnode(h, agnameof(v), TRUE);
   }
 
-  // cria arestas faltantes
-  for (vertice v = agfstnode(h); v; v = agnxtnode(g,v))
-  {
-    for (vertice v2 = agfstnode(h); v2; v2 = agnxtnode(h, v2))
-    {
-      if (v != v2)
-      {
-        if ( ! agedge(h, v, v2, NULL , 0) ) // se nao existe aresta entre os vertices, faça:
-        {
-          Agedge_t *a = agedge(h, v, v2, NULL, 1); // cria aresta
-          info = agbindrec(a, "info_aresta", sizeof(info_aresta), TRUE);
-          info->criada = 1 ;
+  for (vertice ga = agfstnode(g), ha = agfstnode(h); ga && ha; ga = agnxtnode(g, ga), ha = agnxtnode(h, ha)) {
+    for (vertice gb = agfstnode(g), hb = agfstnode(h); gb && hb; gb = agnxtnode(g, gb), hb = agnxtnode(h, hb)) {
+      if (ga != gb && ha != hb) {
+        if (!agedge(g, ga, gb, NULL, 0)) {
+          // se nao existe no original, existe no complemento
+          agedge(h, ha, hb, "aresta", 1);
         }
       }
     }
   }
 
-  // deleta arestas originais
-  for (vertice v = agfstnode(h); v; v = agnxtnode(h, v))
-  {
-    for (vertice v2 = agfstnode(h); v2; v2 = agnxtnode(h, v2))
-    {
-      Agedge_t *a = agedge(h, v, v2, NULL, 0);
-      info = aggetrec( a, "info_aresta", TRUE );
-      if( info->criada == 0) // se aresta pertence ao grafo original:
-        agdeledge(h, a);
-    }
-  }
-  
   return h;
 }

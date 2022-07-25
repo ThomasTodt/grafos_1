@@ -45,9 +45,8 @@ int main(void) {
     }
     printf("\n");
   }
-
   grafo comp = complemento(g);
-  printf("complemento de g:\n");
+  //printf("complemento de g:\n");
   escreve_grafo(comp);
 
   destroi_grafo(comp);

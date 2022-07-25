@@ -1,0 +1,32 @@
+graph complemento {
+	0 -- 2	[key=aresta];
+	0 -- 3	[key=aresta];
+	0 -- 6	[key=aresta];
+	0 -- 7	[key=aresta];
+	0 -- 8	[key=aresta];
+	0 -- 9	[key=aresta];
+	1 -- 3	[key=aresta];
+	1 -- 4	[key=aresta];
+	1 -- 5	[key=aresta];
+	1 -- 7	[key=aresta];
+	1 -- 8	[key=aresta];
+	1 -- 9	[key=aresta];
+	2 -- 4	[key=aresta];
+	2 -- 5	[key=aresta];
+	2 -- 6	[key=aresta];
+	2 -- 8	[key=aresta];
+	2 -- 9	[key=aresta];
+	3 -- 5	[key=aresta];
+	3 -- 6	[key=aresta];
+	3 -- 7	[key=aresta];
+	3 -- 9	[key=aresta];
+	4 -- 5	[key=aresta];
+	4 -- 6	[key=aresta];
+	4 -- 7	[key=aresta];
+	4 -- 8	[key=aresta];
+	5 -- 6	[key=aresta];
+	5 -- 9	[key=aresta];
+	6 -- 7	[key=aresta];
+	7 -- 8	[key=aresta];
+	8 -- 9	[key=aresta];
+}
