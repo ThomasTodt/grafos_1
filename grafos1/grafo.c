@@ -1,5 +1,6 @@
-#include <stdio.h>
 #include "grafo.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
   Agrec_t header;
@@ -14,17 +15,20 @@ typedef struct {
 //------------------------------------------------------------------------------
 grafo le_grafo(void) 
 {
-  return agread(stdin, NULL); 
+  grafo g = agread(stdin, NULL);
+  //aginit(g, agobjkind(g), "info_vertice", sizeof(info_vertice), TRUE);
+  return g; 
 }
 //------------------------------------------------------------------------------
 void destroi_grafo(grafo g) 
 {
-  return agclose(g);
+  agclose(g);
 }
 //------------------------------------------------------------------------------
 grafo escreve_grafo(grafo g) 
 {
-  return agwrite(g, stdout);
+  agwrite(g, stdout);
+  return g;
 }
 
 // -----------------------------------------------------------------------------
@@ -96,18 +100,7 @@ int grau_minimo(grafo g)
 // -----------------------------------------------------------------------------
 int grau_medio(grafo g) 
 {
-  vertice atual = agfstnode(g);
-  int total = 0;
-
-  vertice ultimo = aglstnode(g);
-
-  while (atual != ultimo)
-  {
-    total += grau(atual, g);
-    atual = agnxtnode(g, atual);
-  }
-
-  // Meio estranho retornar int, faria mais sentido retornar um float.
+  int total = n_arestas(g) * 2;
   return total / n_vertices(g);
 }
 
@@ -137,8 +130,12 @@ int regular(grafo g)
 
 // -----------------------------------------------------------------------------
 int completo(grafo g) {
-  
-  return 0;
+  // nao funciona com multigrafos
+
+  int arestas = n_arestas(g);  
+  int vertices = n_vertices(g);
+
+  return arestas == (vertices * (vertices - 1)) / 2;
 }
 
 // -----------------------------------------------------------------------------
@@ -187,9 +184,49 @@ int conexo(grafo g)
 }
 
 // -----------------------------------------------------------------------------
+/// funcao auxiliar que checa se o componente do vertice v é um subgrafo bipartido.
+static int backtrack_bipartido(grafo g, vertice v, int cor_atual) {
+  info_vertice *info;
+  info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
+  if (info == NULL) {
+    printf("eita\n");
+  }
+
+  if (info->contado != -1) {
+    // se ja passamos pelo vertice a cor deve ser a mesma que colocamos antes
+    return cor_atual == info->contado;
+  } else {
+    // se ainda nao passamos entao colocamos a cor esperada
+    info->contado = cor_atual;
+  }
+
+  // para todos os vizinhos...
+  for (Agedge_t *e = agfstedge(g, v); e; e = agnxtedge(g, e, v)) {
+    if (!backtrack_bipartido(g, e->node, (cor_atual + 1) % 2)) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 int bipartido(grafo g) {
-  
-  return 0;
+  info_vertice *info;
+
+  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v))
+  {
+    info = aggetrec(v, "info_vertice", TRUE);
+    info->contado = -1;
+  }
+
+  // temos que fazer isso, para garantir que todos os componentes
+  // sao subgrafos bipartidos 
+  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v)) {
+    if (!backtrack_bipartido(g, agfstnode(g), 0))
+      return 0;
+  }
+
+  return 1;
 }
 
 // -----------------------------------------------------------------------------
