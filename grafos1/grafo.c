@@ -254,26 +254,49 @@ int n_triangulos(grafo g)
 
   int tamanho = n_vertices(g);
 
-  mat2 = (int **) malloc ((unsigned long) tamanho * sizeof (int*)) ;
-  for (int i=0; i < tamanho; i++)
-    mat2[i] = (int *) malloc ((unsigned long) tamanho * sizeof (int)) ;
+  mat2 = (int **) calloc ((unsigned long) tamanho, sizeof (int*)) ;
+  for (int i = 0; i < tamanho; i++)
+    mat2[i] = (int *) calloc ((unsigned long) tamanho, sizeof (int)) ;
 
-  mat3 = (int **) malloc ((unsigned long) tamanho * sizeof (int*)) ;
-  for (int i=0; i < tamanho; i++)
-    mat3[i] = (int *) malloc ((unsigned long) tamanho * sizeof (int)) ;
+  mat3 = (int **) calloc ((unsigned long) tamanho, sizeof (int*)) ;
+  for (int i = 0; i < tamanho; i++)
+    mat3[i] = (int *) calloc ((unsigned long) tamanho, sizeof (int)) ;
 
 
   multiplica_matriz_adjacencia(mat, mat, mat2, tamanho);
-  multiplica_matriz_adjacencia(mat, mat2, mat3, tamanho);
+  multiplica_matriz_adjacencia(mat2, mat, mat3, tamanho);
 
+  printf("asdfasf\n");
+  for (int i = 0; i < n_vertices(g); i++) {
+    for (int j = 0; j < n_vertices(g); j++) {
+      printf("%d ", mat[i][j]);
+    }
+    printf("\n");
+  }
+  printf("asdfasf\n");
+
+  for (int i = 0; i < n_vertices(g); i++) {
+    for (int j = 0; j < n_vertices(g); j++) {
+      printf("%d ", mat2[i][j]);
+    }
+    printf("\n");
+  }
+  printf("asdfasf\n");
+  for (int i = 0; i < n_vertices(g); i++) {
+    for (int j = 0; j < n_vertices(g); j++) {
+      printf("%d ", mat3[i][j]);
+    }
+    printf("\n");
+  }
+  printf("asdfasf\n");
 
   int traco = 0 ;
-  for (int i=0; i < tamanho; i++)
+  for (int i = 0; i < tamanho; i++)
     traco += mat3[i][i];
 
 
   // liberar matrizes
-  for (int i=0; i < tamanho; i++)
+  for (int i = 0; i < tamanho; i++)
   {
     free(mat[i]);
     free(mat2[i]);
@@ -283,7 +306,7 @@ int n_triangulos(grafo g)
   free(mat2);
   free(mat3);
   
-  return traco;
+  return traco / 6;
 }
 
 // -----------------------------------------------------------------------------
