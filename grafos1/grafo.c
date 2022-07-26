@@ -161,9 +161,6 @@ int conexo(grafo g)
 
 static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // funcao que auxilia a funcao "conexo"
 {
-  if (*contador_vertices == 0)
-    return 1;
-
   info_vertice *info;
   info = (info_vertice*) aggetrec(atual, "info_vertice", TRUE);
 
@@ -171,6 +168,9 @@ static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // f
   {
     info->contado = 1;
     (*contador_vertices)--;
+
+    if (*contador_vertices == 0)
+      return 1;
 
 
     for (vertice v = agnxtnode(g, atual); v; v = agnxtnode(g,v))
