@@ -7,7 +7,7 @@ int main(void) {
 
   grafo g = le_grafo();
 
-  escreve_grafo(g);
+  //escreve_grafo(g);
 
   printf("%d vertices\n", n_vertices(g));
   printf("%d arestas\n", n_arestas(g));
@@ -38,16 +38,16 @@ int main(void) {
   printf("%d triangulos\n", n_triangulos(g));
 
   printf("Matriz de adjacência:\n");
-  int **m = matriz_adjacencia(g);
-  for (int i = 0; i < n_vertices(g); i++) {
-    for (int j = 0; j < n_vertices(g); j++) {
-      printf("%d ", m[i][j]);
-    }
-    printf("\n");
-  }
+  //int **m = matriz_adjacencia(g);
+  //for (int i = 0; i < n_vertices(g); i++) {
+  //  for (int j = 0; j < n_vertices(g); j++) {
+  //    printf("%d ", m[i][j]);
+  //  }
+  //  printf("\n");
+  //}
   grafo comp = complemento(g);
   //printf("complemento de g:\n");
-  escreve_grafo(comp);
+  //escreve_grafo(comp);
 
   destroi_grafo(comp);
   

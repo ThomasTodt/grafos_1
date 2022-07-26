@@ -21,7 +21,7 @@ static void multiplica_matriz_adjacencia(int **A, int **B, int **C, int tamanho)
 grafo le_grafo(void) 
 {
   grafo g = agread(stdin, NULL);
-  //aginit(g, agobjkind(g), "info_vertice", sizeof(info_vertice), TRUE);
+  aginit(g, AGNODE, "info_vertice", sizeof(info_vertice), TRUE);
   return g; 
 }
 //------------------------------------------------------------------------------
@@ -143,9 +143,25 @@ int completo(grafo g) {
 }
 
 // -----------------------------------------------------------------------------
+int conexo(grafo g) 
+{
+  info_vertice *info;
+
+  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v))
+  {
+    //info = agbindrec(v, "info_vertice", sizeof(info_vertice), TRUE);
+    info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
+    info->contado = 0;
+  }
+
+  int contador_vertices = n_vertices(g);
+
+  return backtrack_conexo(g, agfstnode(g), &contador_vertices);
+}
+
 static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // funcao que auxilia a funcao "conexo"
 {
-  if (contador_vertices == 0)
+  if (*contador_vertices == 0)
     return 1;
 
   info_vertice *info;
@@ -172,23 +188,27 @@ static int backtrack_conexo(grafo g, vertice atual, int *contador_vertices) // f
   return 0;
 }
 
-int conexo(grafo g) 
-{
+// -----------------------------------------------------------------------------
+/// funcao auxiliar que checa se o componente do vertice v é um subgrafo bipartido.
+int bipartido(grafo g) {
   info_vertice *info;
 
   for (vertice v = agfstnode(g); v; v = agnxtnode(g,v))
   {
-    info = agbindrec(v, "info_vertice", sizeof(info_vertice), TRUE);
-    info->contado = 0;
+    info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
+    info->contado = -1;
   }
 
-  int contador_vertices = n_vertices(g);
+  // temos que fazer isso, para garantir que todos os componentes
+  // sao subgrafos bipartidos 
+  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v)) {
+    if (!backtrack_bipartido(g, agfstnode(g), 0))
+      return 0;
+  }
 
-  return backtrack_conexo(g, agfstnode(g), &contador_vertices);
+  return 1;
 }
 
-// -----------------------------------------------------------------------------
-/// funcao auxiliar que checa se o componente do vertice v é um subgrafo bipartido.
 static int backtrack_bipartido(grafo g, vertice v, int cor_atual) {
   info_vertice *info;
   info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
@@ -209,25 +229,6 @@ static int backtrack_bipartido(grafo g, vertice v, int cor_atual) {
     if (!backtrack_bipartido(g, e->node, (cor_atual + 1) % 2)) {
       return 0;
     }
-  }
-
-  return 1;
-}
-
-int bipartido(grafo g) {
-  info_vertice *info;
-
-  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v))
-  {
-    info = (info_vertice *) aggetrec(v, "info_vertice", TRUE);
-    info->contado = -1;
-  }
-
-  // temos que fazer isso, para garantir que todos os componentes
-  // sao subgrafos bipartidos 
-  for (vertice v = agfstnode(g); v; v = agnxtnode(g,v)) {
-    if (!backtrack_bipartido(g, agfstnode(g), 0))
-      return 0;
   }
 
   return 1;
@@ -265,30 +266,6 @@ int n_triangulos(grafo g)
 
   multiplica_matriz_adjacencia(mat, mat, mat2, tamanho);
   multiplica_matriz_adjacencia(mat2, mat, mat3, tamanho);
-
-  printf("asdfasf\n");
-  for (int i = 0; i < n_vertices(g); i++) {
-    for (int j = 0; j < n_vertices(g); j++) {
-      printf("%d ", mat[i][j]);
-    }
-    printf("\n");
-  }
-  printf("asdfasf\n");
-
-  for (int i = 0; i < n_vertices(g); i++) {
-    for (int j = 0; j < n_vertices(g); j++) {
-      printf("%d ", mat2[i][j]);
-    }
-    printf("\n");
-  }
-  printf("asdfasf\n");
-  for (int i = 0; i < n_vertices(g); i++) {
-    for (int j = 0; j < n_vertices(g); j++) {
-      printf("%d ", mat3[i][j]);
-    }
-    printf("\n");
-  }
-  printf("asdfasf\n");
 
   int traco = 0 ;
   for (int i = 0; i < tamanho; i++)
